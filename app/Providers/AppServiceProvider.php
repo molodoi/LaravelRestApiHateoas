@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //Schema::defaultStringLength(191);
+        // Mysql supporte 255 caractères en UTF8 et 191 en UTF8mb4
+        Schema::defaultStringLength(191);
     }
 
     /**
