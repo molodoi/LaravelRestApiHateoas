@@ -53,7 +53,8 @@ class UserController extends ApiController
 
         $user = User::create($data);
 
-        return response()->json(['data' => $user], 201);
+        //return response()->json(['data' => $user], 201);
+        return $this->showOne($user, 201);
     }
 
     /**
@@ -66,7 +67,8 @@ class UserController extends ApiController
     {
         $user = User::findOrFail($id);
 
-        return response()->json(['data' => $user], 200);
+        //return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 
     /**
@@ -113,19 +115,23 @@ class UserController extends ApiController
 
         if($request->has('admin')){
             if(!$user->isVerified()){
-                return response()->json(['error' => 'Seul les utilisateurs vérifié peuvent modifier', 'code' => 409], 409);     
+                //return response()->json(['error' => 'Seul les utilisateurs vérifié peuvent modifier', 'code' => 409], 409);  
+                //From Traits/ApiResponse and by available in our BaseController named ApiController
+                return $this->errorResponse('Seul les utilisateurs vérifié peuvent modifier', 409);
             } 
             $user->admin = $request->admin;           
         }
 
         // Lorsque vous voulez savoir si le modèle a été modifié depuis qu'il a été interrogé à partir de la base de données ou n'est pas enregistré du tout, vous utilisez la ->isDirty()fonction.
         if(!$user->isDirty()){
-            return response()->json(['error' => 'Vous devez specifier des valeurs différentes pour mettre à jour', 'code' => 422], 422);    
+            //return response()->json(['error' => 'Vous devez specifier des valeurs différentes pour mettre à jour', 'code' => 422], 422);    
+            return $this->errorResponse('Vous devez specifier des valeurs différentes pour mettre à jour', 422);
         }
 
         $user->save();
 
-        return response()->json(['data' => $user], 200);
+        //return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 
     /**
@@ -140,6 +146,7 @@ class UserController extends ApiController
 
         $user->delete();
 
-        return response()->json(['data' => $user], 200);
+        //return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 }
