@@ -30,9 +30,11 @@ class BuyerController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    //public function show($id)
+    public function show(Buyer $buyer)
     {
-        $buyer = Buyer::has('transactions')->findOrFail($id);
+        //$buyer = Buyer::has('transactions')->findOrFail($id);
+        // Instead we use Scopes/BuyerScope and boot method in Models/Buyer
 
         //return response()->json(['data' => $buyer], 200);
         return $this->showOne($buyer);

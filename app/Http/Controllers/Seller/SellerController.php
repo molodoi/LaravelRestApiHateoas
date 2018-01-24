@@ -30,9 +30,10 @@ class SellerController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Seller $seller)
     {
-        $seller = Seller::has('products')->findOrFail($id);
+        //$seller = Seller::has('products')->findOrFail($id);
+        // Instead we use Scopes/SellerScope and boot method in Models/Seller
 
         //return response()->json(['data' => $seller], 200);
         //Instead use showAll from Traits/ApiResponse and by available in our BaseController named ApiController
