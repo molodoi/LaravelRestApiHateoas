@@ -17,6 +17,11 @@ class Category extends Model
         'description',
     ];
 
+    // remove pivot table from the results restfullapi.local/api/categories/1/products
+    protected $hidden = [
+    	'pivot'
+    ];
+
     public function products(){
         return $this->belongsToMany(Product::class);
     }

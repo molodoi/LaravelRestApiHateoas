@@ -28,6 +28,11 @@ class Product extends Model
         'seller_id'
     ];
 
+    // remove pivot table from the results restfullapi.local/api/categories/1/products
+    protected $hidden = [
+        'pivot'
+    ];
+
     public function isAvailable(){
         return $this->status == Product::AVAILABLE_PRODUCT;
     }
