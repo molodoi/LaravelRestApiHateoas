@@ -1,6 +1,8 @@
 LaravelRestApiHateoas
 ========================
-Build a RESTfull API Hateoas with Laravel 5
+Build a RESTfull API Hateoas with Laravel 5.5
+
+![alt text](https://github.com/molodoi/LaravelRestApiHateoas/tree/master/public/img/mcd-restfullapi.png)
 
 Content
 ========================
