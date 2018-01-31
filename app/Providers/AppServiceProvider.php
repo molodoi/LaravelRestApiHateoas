@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Product;
 use App\User;
 use App\Mail\UserCreated;
+use App\Mail\UserMailChanged;
 use Illuminate\Support\Facades\Mail;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,9 +25,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Send verification mail using event
         User::created(function($user) {
+            // en cas d'erreur rééssai 5 fois d'envoyer le mail toute les 100ms 
             retry(5, function() use ($user) {
                 Mail::to($user)->send(new UserCreated($user));
             }, 100);
+        });
+
+        User::updated(function($user) {
+            //check if email change - laravel verify only if email change
+            if ($user->isDirty('email')) {
+                retry(5, function() use ($user) {
+                    Mail::to($user)->send(new UserMailChanged($user));
+                }, 100);
+            }
         });
 
         // Event update : Vérifier/changer le statut du produit à chaque changement
