@@ -5,6 +5,8 @@ namespace App\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+//Cache
+use Illuminate\Support\Facades\Cache;
 
 //Pagination
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +34,8 @@ trait ApiResponser
 		$collection = $this->paginate($collection, $transformer);
 
 		$collection = $this->transformData($collection, $transformer);
+
+		$collection = $this->cacheResponse($collection);
 				
 		return $this->successResponse($collection, $code);
 	}
@@ -122,5 +126,28 @@ trait ApiResponser
 		$paginated->appends(request()->all());
 
 		return $paginated;
+	}
+
+
+	protected function cacheResponse($data)
+	{
+		// url = http://restfullapi.local/api/users
+		$url = request()->url();
+		// queryParams = ["isVerified" => "0","per_page" => "2"]
+		$queryParams = request()->query();
+
+		// Permet de recupérer le cache pour peu importe l'ordre des paramètres dans l'url ex : ?per_page=8&isVerified=0 == ?isVerified=0&per_page=8
+		ksort($queryParams);
+
+		//Génère une chaîne de requête en encodage URL array to foo=bar&baz=boom&cow=milk&php=hypertext+processor
+		$queryString = http_build_query($queryParams);
+
+		//On recrée l'url
+		$fullUrl = "{$url}?{$queryString}";
+
+		//On ajoute au cache url et data puis on retourne
+		return Cache::remember($fullUrl, 30/60, function() use($data) {
+			return $data;
+		});
 	}
 }
