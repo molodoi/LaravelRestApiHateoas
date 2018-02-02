@@ -22,6 +22,9 @@ trait ApiResponser
 		}
 		$transformer = $collection->first()->transformer;
 
+		$collection = $this->filterData($collection, $transformer);
+		$collection = $this->sortData($collection, $transformer);
+
 		$collection = $this->transformData($collection, $transformer);
 				
 		return $this->successResponse($collection, $code);
@@ -38,9 +41,49 @@ trait ApiResponser
 		return 	$this->successResponse(['data' => $message], $code);
 	}
 
+	/**
+	 * Transform data
+	 * @param null|mixed $data
+	 * @param null|callable|\League\Fractal\TransformerAbstract $transformer
+	 *
+	 * @return array
+ 	 */
 	protected function transformData($data, $transformer)
 	{
 		$transformation = fractal($data, new $transformer);
 		return $transformation->toArray();
+	}
+
+	/**
+	 * Sorting Data By
+	 * @param \Illuminate\Support\Collection
+	 * @param \League\Fractal\TransformerAbstract $transformer
+ 	 */
+	protected function sortData(Collection $collection, $transformer)
+	{
+		// if we have a sort_by params in url we can proceed
+		if (request()->has('sort_by')) {
+			// App\Transformers\*Transformer::originalAttribute($index)
+			$attribute = $transformer::originalAttribute(request()->sort_by); 
+			$collection = $collection->sortBy->{$attribute};
+		}
+		return $collection;
+	}
+
+	/**
+	 * Filter Data return datas ex: {{urlApi}}/users?isVerifed = 0
+	 * @param \Illuminate\Support\Collection
+	 * @param \League\Fractal\TransformerAbstract $transformer
+ 	 */
+	protected function filterData(Collection $collection, $transformer)
+	{
+		foreach (request()->query() as $query => $value) {
+			$attribute = $transformer::originalAttribute($query);
+			// if attribute and value are set 
+			if (isset($attribute, $value)) {
+				$collection = $collection->where($attribute, $value);
+			}
+		}
+		return $collection;
 	}
 }

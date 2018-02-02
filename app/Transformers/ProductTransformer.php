@@ -28,4 +28,25 @@ class ProductTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * Map&Translate attributes index by the original attributes
+     * Ex in : app\Traits\ApiResponser::sortData() 
+     */
+    public static function originalAttribute($index)
+    {
+        $attributes = [
+            'identifier' => 'id',
+            'title' => 'name',
+            'details' => 'description',
+            'stock' => 'quantity',
+            'situation' => 'status',
+            'picture' => 'image',
+            'seller' => 'seller_id',
+            'creationDate' => 'created_at',
+            'lastChange' => 'updated_at',
+            'deletedDate' => 'deleted_at',
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
 }

@@ -24,4 +24,22 @@ class TransactionTransformer extends TransformerAbstract
             'deletedDate' => isset($transaction->deleted_at) ? (string) $transaction->deleted_at : null,
         ];
     }
+    
+    /**
+     * Map&Translate attributes index by the original attributes
+     * Ex in : app\Traits\ApiResponser::sortData() 
+     */
+    public static function originalAttribute($index)
+    {
+        $attributes = [
+            'identifier' => 'id',
+            'quantity' => 'quantity',
+            'buyer' => 'buyer_id',
+            'product' => 'product_id',
+            'creationDate' => 'created_at',
+            'lastChange' => 'updated_at',
+            'deletedDate' => 'deleted_at',
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
 }

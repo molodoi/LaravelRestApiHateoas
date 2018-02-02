@@ -27,6 +27,10 @@ class UserTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * Map&Translate attributes index by the original attributes
+     * Ex in : app\Traits\ApiResponser::sortData() 
+     */
     public static function originalAttribute($index)
     {
         $attributes = [
@@ -41,6 +45,7 @@ class UserTransformer extends TransformerAbstract
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }
+    
     public static function transformedAttribute($index)
     {
         $attributes = [
