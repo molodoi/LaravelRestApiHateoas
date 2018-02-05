@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
-
+use Illuminate\Session\TokenMismatchException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -102,6 +102,10 @@ class Handler extends ExceptionHandler
             
         }
 
+        if($exception instanceof TokenMismatchException){
+            return redirect()->back()->withInput($request->input());               
+        }
+
         if(config('app.debug')){
             return parent::render($request, $exception);
         }
@@ -118,6 +122,11 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
+        //Check isFrontend we return html and redirection where required
+        if ($this->isFrontend($request)) {
+            return redirect()->guest('login');
+        }
+
         return $this->errorResponse("Unauthenticated.", 401);
     }
 
@@ -132,6 +141,25 @@ class Handler extends ExceptionHandler
     {
         $errors = $e->validator->errors()->getMessages();
 
+        //Check isFrontend we return html and redirection where required
+        if ($this->isFrontend($request)) {
+            return $request->ajax() ? response()->json($error, 422) : redirect()
+                ->back()
+                ->withInput($request->input())
+                ->withErrors($errors);
+        }
+
         return $this->errorResponse($errors, 422);
+    }
+
+
+    /**
+     * Check c'est en frontend/d'un navigateur ou d'un autre client qui accepte l'html et que la requete contient le middleware web
+     * private function isFrontend($request)
+     *
+     */
+    private function isFrontend($request)
+    {
+        return $request->acceptsHtml() && collect($request->route()->middleware())->contains('web');
     }
 }

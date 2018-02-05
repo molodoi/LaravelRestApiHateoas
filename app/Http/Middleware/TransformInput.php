@@ -28,11 +28,12 @@ class TransformInput
         
         $response = $next($request);
 
+        // en cas d'erreurs
         if (isset($response->exception) && $response->exception instanceof ValidationException) {
             $data = $response->getData();
 
             $transformedErrors = [];
-            // On boucle pour récupérer les données de la reponse renvoyer les clés des tranformers ex : title  
+            // On boucle pour récupérer les données de la reponse renvoyer les clés des tranformers ex : title grace à la méthode de nos  \Transformer::transformedAttribute()
             foreach ($data->error as $field => $error) {
                 $transformedField = $transformer::transformedAttribute($field);
 
