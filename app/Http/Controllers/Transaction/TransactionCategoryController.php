@@ -8,6 +8,14 @@ use App\Http\Controllers\ApiController;
 
 class TransactionCategoryController extends ApiController
 {
+
+    public function __construct()
+    {  
+        // To protect index action   
+        $this->middleware('client.credentials')->only(['index']); 
+    }
+
+    
     /**
      * Display a listing of the resource.
      *
