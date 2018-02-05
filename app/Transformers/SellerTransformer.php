@@ -69,4 +69,22 @@ class SellerTransformer extends TransformerAbstract
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }
+
+    /**
+     * Map&Translate attributes transformed index to the original attributes
+     * Ex in : aApp\Http\Middleware\TransformInput::handle() 
+     */
+    public static function transformedAttribute($index)
+    {
+        $attributes = [
+            'id' => 'identifier',
+            'name' => 'name',
+            'email' => 'email',
+            'verified' => 'isVerified',
+            'created_at' => 'creationDate',
+            'updated_at' => 'lastChange',
+            'deleted_at' => 'deletedDate',
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
 }
