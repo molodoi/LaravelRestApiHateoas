@@ -24,3 +24,5 @@ Install
 4 - Make : php artisan migrate 
 
 5 - Make : php artisan db:seed
+
+6 - Make : npm install
